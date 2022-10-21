@@ -1,31 +1,63 @@
 package elevator.challenge.model;
 
-import elevator.challenge.model.destinstion.down.Down;
-import elevator.challenge.model.destinstion.up.Up;
 import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
-public class Elevator {
+public class Elevator extends Thread {
+    private Floor floor;
+    private Button button;
     private int elevatorsFloor;
     private int currentFloor;
     private int destinationFloor;
     private boolean availability;
-    private String direction;
 
-    public void chooseDirection(String direction){
-        if(direction.equals("UP")){
-            new Up().floor(currentFloor, destinationFloor);
-        } else if(direction.equals("DOWN")){
-            new Down().floor(currentFloor, destinationFloor);
+    public Elevator(int elevatorsFloor, Floor floor) {
+        this.elevatorsFloor = elevatorsFloor;
+        this.floor = floor;
+        currentFloor = floor.getCurrentFloor();
+        destinationFloor = floor.getDestinationFloor();
+    }
+
+    @SneakyThrows
+    @Override
+    public void run() {
+        if (this.getDirection().equals("UP")) {
+            for (int i = elevatorsFloor; i <= destinationFloor; i++) {
+                Thread.sleep(1000);
+                System.out.println("Floor: " + i);
+
+                if ((i != elevatorsFloor) && (i == currentFloor)) {
+                    System.out.println("Your elevator is here: " + i);
+                }
+            }
+        } else if (this.getDirection().equals("DOWN")){
+            for (int i = elevatorsFloor; i >= destinationFloor; i--) {
+                Thread.sleep(1000);
+                System.out.println("Floor: " + i);
+
+                if ((i != elevatorsFloor) && (i == currentFloor)) {
+                    System.out.println("Your elevator is here: " + i);
+                }
+            }
         }
     }
 
-    public boolean isElevatorOnTheCurrentFloor(int currentFloor){
-        if(currentFloor == elevatorsFloor){
-            return true;
+    public String getDirection() {
+        if (currentFloor < destinationFloor) {
+//            new Up().floor(currentFloor, destinationFloor);
+            return "UP";
+        } else if (currentFloor > destinationFloor) {
+//            new Down().floor(currentFloor, destinationFloor);
+            return "DOWN";
+        } else {
+            return "It is your floor: " + currentFloor;
         }
-        return false;
+    }
+
+    public boolean isElevatorOnTheCurrentFloor() {
+        return currentFloor == elevatorsFloor;
     }
 }
