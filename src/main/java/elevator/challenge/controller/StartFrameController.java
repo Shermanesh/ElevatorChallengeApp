@@ -45,8 +45,10 @@ public class StartFrameController implements ActionListener {
         } else if (e.getSource() == startButton) {
             if (((currentFloor > elevatorsFloor) && (currentFloor > destinationFloor)) ||
                     (elevatorsFloor != 0 && (currentFloor < elevatorsFloor) && (currentFloor < destinationFloor))) {
+                System.out.println("Current floor: " + currentFloor + ". Destination floor: " + destinationFloor + ".");
                 getNonLinearElevatorMotion();
             } else {
+                System.out.println("Current floor: " + currentFloor + ". Destination floor: " + destinationFloor + ".");
                 getLinearElevatorMotion();
             }
         }
@@ -59,22 +61,22 @@ public class StartFrameController implements ActionListener {
 
     /*The elevator has non-linear motion. It is supposed to go up/down from elevatorsFloor to the currentFloor
     and then back down/up to destinationFloor.*/
-    private void getNonLinearElevatorMotion () throws InterruptedException {
-        System.out.println("Current floor: " + currentFloor + ". Destination floor: " + destinationFloor + ".");
-
+    @SneakyThrows
+    private Thread getNonLinearElevatorMotion (){
         Elevator elevator = new Elevator(elevatorsFloor, (new Floor(elevatorsFloor, currentFloor)));
         elevator.start();
         elevator.join();
         elevator = new Elevator(currentFloor, (new Floor(currentFloor, destinationFloor)));
         elevator.start();
+        return elevator;
     }
 
     /*The elevator has linear motion. It is supposed to go up/down from elevatorsFloor to the currentFloor
     and then continue to destinationFloor.*/
-    private void getLinearElevatorMotion () {
-        System.out.println("Current floor: " + currentFloor + ". Destination floor: " + destinationFloor + ".");
+    private Thread getLinearElevatorMotion () {
         Elevator elevator = new Elevator(elevatorsFloor, new Floor(currentFloor, destinationFloor));
         elevator.start();
+        return elevator;
     }
 }
 

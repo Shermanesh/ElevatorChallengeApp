@@ -65,10 +65,4 @@ public class Elevator extends Thread {
         }
         return availability = true;
     }
-
-    private int count;
-    public void increment() {
-        int temp = count;
-        count = temp + 1;
-    }
 }
