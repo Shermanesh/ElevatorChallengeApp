@@ -10,39 +10,40 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Floor {
+
     private final int firsrtFloor = 0;
-    private final int lastFloor = 55;
     private final int officeFloor = 35;
-
+    private final int lastFloor = 55;
     private final List<Integer> floorList = new ArrayList<>();
-
     private int currentFloor;
     private int destinationFloor;
 
+    //Validation_CurrentFloor
     public int getCurrentFloor () {
         if (currentFloor < firsrtFloor || currentFloor > lastFloor)
-            try {
-                throw new WrongFloorNrException(currentFloor);
-            } catch (WrongFloorNrException e) {
-                e.printStackTrace();
-            }
+            getException(currentFloor);
         return currentFloor;
     }
 
+    //Validation_DestinationFloor
     public int getDestinationFloor () {
         if (destinationFloor < firsrtFloor || destinationFloor > lastFloor)
-            try {
-                throw new WrongFloorNrException(destinationFloor);
-            } catch (WrongFloorNrException e) {
-                e.printStackTrace();
-            }
+            getException(destinationFloor);
         return destinationFloor;
     }
 
-    public List<Integer> getFloorList () {
-        for (int i = firsrtFloor; i <= lastFloor; i++) {
-            floorList.add(i);
+    private void getException (int floor) {
+        try {
+            throw new WrongFloorNrException(floor);
+        } catch (WrongFloorNrException e) {
+            e.printStackTrace();
         }
+    }
+
+    //List for GUI
+    public List<Integer> getFloorList () {
+        for (int i = firsrtFloor; i <= lastFloor; i++)
+            floorList.add(i);
         return floorList;
     }
 }

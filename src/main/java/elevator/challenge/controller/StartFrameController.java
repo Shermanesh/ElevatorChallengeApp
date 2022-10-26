@@ -2,23 +2,27 @@ package elevator.challenge.controller;
 
 import elevator.challenge.model.Elevator;
 import elevator.challenge.model.Floor;
-import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.Objects;
 import javax.swing.*;
 
+@Getter
+@Setter
 @NoArgsConstructor
 public class StartFrameController implements ActionListener {
 
-    List<Elevator> elevators = new ArrayList<>();
+    public static final String NO_CHOICE = "Please choose the current and destination floor.";
+    public static final String THE_SAME_FLOOR = "Wrong destination floor. It is your current floor.";
 
+    //GUI properties
     private JButton startButton;
     private JComboBox currentFloorBox;
     private JComboBox destinationFloorBox;
-    private int elevatorsFloor = 0;
 
+    private int elevatorsFloor = 0; //The elevator starts from the first floor by default
+    private int officeFloor = new Floor().getOfficeFloor();
     private int currentFloor;
     private int destinationFloor;
 
@@ -28,7 +32,6 @@ public class StartFrameController implements ActionListener {
         this.destinationFloorBox = destinationFloorBox;
     }
 
-
     @SneakyThrows
     @Override
     public void actionPerformed (ActionEvent e) {
@@ -36,38 +39,42 @@ public class StartFrameController implements ActionListener {
         destinationFloor = (int) Objects.requireNonNull(destinationFloorBox.getSelectedItem());
 
         if (currentFloor == 0 && destinationFloor == 0) {
-            JFrame alert = new JFrame();
-            JOptionPane.showMessageDialog(alert, "Please choose the current and destination floor.", "Alert",
-                    JOptionPane.WARNING_MESSAGE);
+            getAlert(NO_CHOICE);
         } else if (currentFloor == destinationFloor) {
-            JFrame alert = new JFrame();
-            JOptionPane.showMessageDialog(alert, "Wrong destination floor. It is your current floor.", "Alert",
-                    JOptionPane.WARNING_MESSAGE);
+            getAlert(THE_SAME_FLOOR);
         } else if (e.getSource() == startButton) {
             if (((currentFloor > elevatorsFloor) && (currentFloor > destinationFloor)) ||
                     (elevatorsFloor != 0 && (currentFloor < elevatorsFloor) && (currentFloor < destinationFloor))) {
-                System.out.println("Current floor: " + currentFloor + ". Destination floor: " + destinationFloor + ".");
-                Elevator elevator1 = new Elevator(elevatorsFloor, (new Floor(elevatorsFloor, currentFloor)));
-                Elevator elevator2 = new Elevator(currentFloor, (new Floor(currentFloor, destinationFloor)));
-                elevator1.start();
-                elevator1.join();
-                elevator2.start();
-                elevator2.join();
+                getNonLinearElevatorMotion();
             } else {
-                System.out.println("Current floor: " + currentFloor + ". Destination floor: " + destinationFloor + ".");
-                Elevator elevator = new Elevator(elevatorsFloor, (new Floor(currentFloor, destinationFloor)));
-                elevator.start();
-                elevator.join();
+                getLinearElevatorMotion();
             }
         }
+    }
 
-        //                for (int i = 1; i <= 7; i++) {
-        //                    elevators.add(elevator);
-        //                    if (elevators.size() == 7) {
-        //                        elevators.get(0).start();
-        //                    }
-        //                }
+    private void getAlert (String message) {
+        JFrame alert = new JFrame();
+        JOptionPane.showMessageDialog(alert, message, "Alert", JOptionPane.WARNING_MESSAGE);
+    }
 
+    /*The elevator has non-linear motion. It is supposed to go up/down from elevatorsFloor to the currentFloor
+    and then back down/up to destinationFloor.*/
+    private void getNonLinearElevatorMotion () throws InterruptedException {
+        System.out.println("Current floor: " + currentFloor + ". Destination floor: " + destinationFloor + ".");
+
+        Elevator elevator = new Elevator(elevatorsFloor, (new Floor(elevatorsFloor, currentFloor)));
+        elevator.start();
+        elevator.join();
+        elevator = new Elevator(currentFloor, (new Floor(currentFloor, destinationFloor)));
+        elevator.start();
+    }
+
+    /*The elevator has linear motion. It is supposed to go up/down from elevatorsFloor to the currentFloor
+    and then continue to destinationFloor.*/
+    private void getLinearElevatorMotion () {
+        System.out.println("Current floor: " + currentFloor + ". Destination floor: " + destinationFloor + ".");
+        Elevator elevator = new Elevator(elevatorsFloor, new Floor(currentFloor, destinationFloor));
+        elevator.start();
     }
 }
 
