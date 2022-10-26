@@ -8,12 +8,12 @@ import java.awt.*;
 import java.util.List;
 import javax.swing.*;
 
+/****Java GUI for button imitation****/
 @Getter
 @Setter
 public class StartFrame extends JFrame {
 
     private List<Integer> floorList = new Floor().getFloorList();
-
     private JLabel empty = new JLabel();
     private JLabel currentFloorLabel = new JLabel("CURRENT FLOOR");
     private JLabel destinationFloorLabel = new JLabel("DESTINATION FLOOR");
@@ -22,8 +22,8 @@ public class StartFrame extends JFrame {
     private JComboBox destinationFloorBox = new JComboBox(floorList.toArray((new Integer[0])));
 
     public StartFrame () {
-
-        startButton.addActionListener(new StartFrameController(this.startButton, this.currentFloorBox, this.destinationFloorBox));
+        startButton.addActionListener(
+                new StartFrameController(this.startButton, this.currentFloorBox, this.destinationFloorBox));
 
         this.setLayout(new GridLayout(2, 3));
         this.add(empty);
@@ -39,6 +39,5 @@ public class StartFrame extends JFrame {
         this.setResizable(true);
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
     }
 }

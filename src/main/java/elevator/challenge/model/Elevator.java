@@ -1,18 +1,14 @@
 package elevator.challenge.model;
 
-import elevator.challenge.viewing.StartFrame;
 import lombok.*;
-import java.util.Map;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Elevator extends Thread {
-    private Map<Elevator, Boolean> elevators;
 
     private Floor floor;
-    private StartFrame startFrame;
     private int elevatorsFloor;
     private int currentFloor;
     private int destinationFloor;
@@ -25,26 +21,13 @@ public class Elevator extends Thread {
         destinationFloor = floor.getDestinationFloor();
     }
 
-    public boolean isAvailability () {
-        if (Thread.currentThread().getState().equals("TERMINATED")) {
-            return availability = true;
-        }
-        return availability = false;
-    }
-
-//    public void addElevators (int elevatorsFloor, int currentFloor, int destinationFloor) {
-//        elevators.add(new Elevator(elevatorsFloor, (new Floor(currentFloor, destinationFloor))));
-//    }
-
     @SneakyThrows
     @Override
     public void run () {
         if (this.getDirection().equals("UP")) {
             System.out.println("Direction: UP");
             for (int i = elevatorsFloor; i <= destinationFloor; i++) {
-                Thread.sleep(1000);
-                System.out.println("Floor: " + i);
-
+                runThread(i);
                 if ((i != elevatorsFloor) && (i == currentFloor)) {
                     System.out.println("Current floor: " + i);
                 }
@@ -52,14 +35,17 @@ public class Elevator extends Thread {
         } else if (this.getDirection().equals("DOWN")) {
             System.out.println("Direction: DOWN");
             for (int i = elevatorsFloor; i >= destinationFloor; i--) {
-                Thread.sleep(1000);
-                System.out.println("Floor: " + i);
-
+                runThread(i);
                 if ((i != elevatorsFloor) && (i == currentFloor)) {
                     System.out.println("Current floor: " + i);
                 }
             }
         }
+    }
+
+    private void runThread (int i) throws InterruptedException {
+        Thread.sleep(1000);
+        System.out.println("Floor: " + i);
     }
 
     public String getDirection () {
@@ -70,5 +56,19 @@ public class Elevator extends Thread {
         } else {
             return "It is current floor: " + currentFloor;
         }
+    }
+
+    public boolean isAvailability () {
+        if ((currentThread().getState().toString().equalsIgnoreCase("RUNNABLE")) ||
+                (currentThread().getState().toString().equalsIgnoreCase("NEW"))) {
+            return availability = false;
+        }
+        return availability = true;
+    }
+
+    private int count;
+    public void increment() {
+        int temp = count;
+        count = temp + 1;
     }
 }
